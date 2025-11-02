@@ -1,7 +1,7 @@
 {
     "contributors": ["Kai", "Security Researchers"],
     "version": "3.0",
-    "description": "Updated with working OTP services - For educational purposes only",
+    "description": "Updated with working OTP services ",
     "sms": {
         "91": [
             {
