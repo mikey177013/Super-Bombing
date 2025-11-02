@@ -18,6 +18,7 @@ import shutil
 import zipfile
 import subprocess
 from io import BytesIO
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 try:
@@ -30,7 +31,6 @@ except ImportError:
     sys.exit(1)
 
 # Local imports
-from utils.decorators import MessageDecorator
 from utils.provider import APIProvider
 
 # Constants
@@ -42,6 +42,66 @@ MAX_LIMITS = {
     "mail": 200000
 }
 SUPPORTED_MODES = ["sms", "call", "mail"]
+
+
+class MessageDecorator:
+    """Enhanced message decorator with colored output"""
+    
+    def __init__(self, style="icon"):
+        self.style = style
+        self.colors = {
+            'success': Fore.GREEN,
+            'error': Fore.RED,
+            'warning': Fore.YELLOW,
+            'info': Fore.CYAN,
+            'section': Fore.MAGENTA,
+            'command': Fore.BLUE,
+            'reset': Style.RESET_ALL
+        }
+    
+    def _print_message(self, message_type, message):
+        """Internal method to print formatted messages"""
+        icons = {
+            'success': '✅',
+            'error': '❌',
+            'warning': '⚠️',
+            'info': 'ℹ️',
+            'section': '📁',
+            'command': '⚡'
+        }
+        
+        color = self.colors.get(message_type, '')
+        icon = icons.get(message_type, '')
+        
+        if self.style == "icon":
+            print(f"{color}{icon} {message}{self.colors['reset']}")
+        else:
+            print(f"{color}[{message_type.upper()}] {message}{self.colors['reset']}")
+    
+    def success(self, message):
+        """Print success message"""
+        self._print_message('success', message)
+    
+    def error(self, message):
+        """Print error message"""
+        self._print_message('error', message)
+    
+    def warning(self, message):
+        """Print warning message"""
+        self._print_message('warning', message)
+    
+    def info(self, message):
+        """Print info message"""
+        self._print_message('info', message)
+    
+    def section(self, message):
+        """Print section header"""
+        self._print_message('section', message)
+    
+    def command(self, message):
+        """Print command message"""
+        self._print_message('command', message)
+
 
 class SuperBomber:
     """Main application class for Super-Bombing"""
@@ -89,7 +149,7 @@ class SuperBomber:
 ███████╗██║   ██║██████╔╝█████╗  ██████╔╝   ██████╔╝██║   ██║██╔████╔██║██████╔╝
 ╚════██║██║   ██║██╔═══╝ ██╔══╝  ██╔══██╗   ██╔══██╗██║   ██║██║╚██╔╝██║██╔══██╗
 ███████║╚██████╔╝██║     ███████╗██║  ██║   ██████╔╝╚██████╔╝██║ ╚═╝ ██║██████╔╝
-╚══════╝ ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚═════╝ 
+╚══════╝ ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═╝   ▚═════╝  ╚═════╝ ╚═╝     ╚═╝╚═════╝ 
             """
         
         colors = [Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA, Fore.YELLOW]
@@ -106,8 +166,8 @@ class SuperBomber:
     def check_internet(self):
         """Check internet connectivity"""
         try:
-            requests.get("https://api.github.com", timeout=10)
-            return True
+            response = requests.get("https://api.github.com", timeout=10)
+            return response.status_code == 200
         except requests.exceptions.RequestException:
             self.mesgdcrt.error("No internet connection detected!")
             return False
@@ -157,8 +217,8 @@ class SuperBomber:
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
                     zip_file.extractall(".")
                 return True
-        except Exception:
-            pass
+        except Exception as e:
+            self.mesgdcrt.error(f"Update failed: {e}")
             
         return False
     
@@ -296,8 +356,7 @@ class SuperBomber:
             f"Target: {cc + ' ' if cc else ''}{target}",
             f"Total Requests: {count}",
             f"Threads: {max_threads}",
-            f"Delay: {delay} seconds",
-            f"API Version: {api.api_version}"
+            f"Delay: {delay} seconds"
         ]
         
         for info in config_info:
@@ -306,40 +365,65 @@ class SuperBomber:
         self.mesgdcrt.warning("This tool is for educational purposes only!")
         print()
         
-        if not APIProvider.api_providers:
+        if not hasattr(APIProvider, 'api_providers') or not APIProvider.api_providers:
             self.mesgdcrt.error("No API providers available for this target")
             return False
         
         # Confirm attack
-        confirmation = input("Press ENTER to start attack or CTRL+C to cancel: ")
-        if confirmation.lower() == 'q':
+        try:
+            input("Press ENTER to start attack or CTRL+C to cancel: ")
+        except KeyboardInterrupt:
+            self.mesgdcrt.warning("Attack cancelled by user")
             return False
         
         # Execute attack
         success, failed = 0, 0
+        start_time = time.time()
         
-        with ThreadPoolExecutor(max_workers=max_threads) as executor:
-            while success + failed < count:
-                remaining = count - (success + failed)
-                batch_size = min(remaining, max_threads * 2)
-                
-                futures = [executor.submit(api.hit) for _ in range(batch_size)]
-                
-                for future in as_completed(futures):
-                    result = future.result()
+        try:
+            with ThreadPoolExecutor(max_workers=max_threads) as executor:
+                while success + failed < count:
+                    remaining = count - (success + failed)
+                    batch_size = min(remaining, max_threads * 2)
                     
-                    if result is None:
-                        self.mesgdcrt.error("Rate limit reached for this target")
-                        return True
+                    futures = [executor.submit(api.hit) for _ in range(batch_size)]
                     
-                    if result:
-                        success += 1
-                    else:
-                        failed += 1
-                    
-                    self.display_progress(cc, target, success, failed, count)
-        
-        return True
+                    for future in as_completed(futures):
+                        result = future.result()
+                        
+                        if result is None:
+                            self.mesgdcrt.error("Rate limit reached for this target")
+                            return True
+                        
+                        if result:
+                            success += 1
+                        else:
+                            failed += 1
+                        
+                        self.display_progress(cc, target, success, failed, count)
+                        
+                        # Add delay between requests
+                        if delay > 0:
+                            time.sleep(delay)
+            
+            # Display final results
+            end_time = time.time()
+            total_time = end_time - start_time
+            
+            self.clear_screen()
+            self.mesgdcrt.section("Attack Completed!")
+            self.mesgdcrt.success(f"Total Requests: {count}")
+            self.mesgdcrt.success(f"Successful: {success}")
+            self.mesgdcrt.error(f"Failed: {failed}")
+            self.mesgdcrt.info(f"Success Rate: {(success/count)*100:.1f}%")
+            self.mesgdcrt.info(f"Time Taken: {total_time:.2f} seconds")
+            self.mesgdcrt.info(f"Requests/Second: {count/total_time:.2f}")
+            
+            return True
+            
+        except Exception as e:
+            self.mesgdcrt.error(f"Attack failed: {e}")
+            return False
     
     def run_sms_mode(self):
         """Run SMS bombing mode"""
@@ -382,21 +466,26 @@ class SuperBomber:
                 print(f"  [{key}] {description}")
             
             print()
-            choice = input("Select an option: ").strip()
-            
-            if choice in menu_options:
-                try:
-                    menu_options[choice][1]()
-                except KeyboardInterrupt:
-                    self.mesgdcrt.warning("Operation cancelled by user")
-                except Exception as e:
-                    self.mesgdcrt.error(f"Error: {e}")
+            try:
+                choice = input("Select an option: ").strip()
                 
-                if choice != "0":
-                    input("\nPress ENTER to continue...")
-            else:
-                self.mesgdcrt.error("Invalid option!")
-                time.sleep(1)
+                if choice in menu_options:
+                    try:
+                        menu_options[choice][1]()
+                    except KeyboardInterrupt:
+                        self.mesgdcrt.warning("Operation cancelled by user")
+                    except Exception as e:
+                        self.mesgdcrt.error(f"Error: {e}")
+                    
+                    if choice != "0":
+                        input("\nPress ENTER to continue...")
+                else:
+                    self.mesgdcrt.error("Invalid option!")
+                    time.sleep(1)
+                    
+            except KeyboardInterrupt:
+                self.mesgdcrt.warning("Exiting...")
+                break
     
     def show_about(self):
         """Show about information"""
@@ -434,6 +523,7 @@ or damage caused by this tool.
         print(about_text)
         input("\nPress ENTER to return to main menu...")
 
+
 def main():
     """Main application entry point"""
     parser = argparse.ArgumentParser(
@@ -455,7 +545,12 @@ def main():
     bomber = SuperBomber()
     bomber.ascii_mode = args.ascii
     bomber.debug_mode = args.debug
-    bomber.initialize()
+    
+    try:
+        bomber.initialize()
+    except Exception as e:
+        print(f"Initialization error: {e}")
+        return
     
     # Handle command line arguments
     if args.version:
@@ -476,24 +571,20 @@ def main():
     bomber.check_for_updates()
     
     # Execute based on arguments
-    if args.sms:
-        bomber.run_sms_mode()
-    elif args.call:
-        bomber.run_call_mode()
-    elif args.mail:
-        bomber.run_mail_mode()
-    else:
-        bomber.show_interactive_menu()
+    try:
+        if args.sms:
+            bomber.run_sms_mode()
+        elif args.call:
+            bomber.run_call_mode()
+        elif args.mail:
+            bomber.run_mail_mode()
+        else:
+            bomber.show_interactive_menu()
+    except KeyboardInterrupt:
+        bomber.mesgdcrt.warning("Operation cancelled by user")
+    except Exception as e:
+        bomber.mesgdcrt.error(f"Unexpected error: {e}")
+
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\n\n❌ Operation cancelled by user")
-        sys.exit(1)
-    except Exception as e:
-        print(f"\n\n💥 Unexpected error: {e}")
-        if "--debug" in sys.argv:
-            import traceback
-            traceback.print_exc()
-        sys.exit(1)
+    main()
