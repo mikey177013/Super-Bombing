@@ -1,5 +1,5 @@
 {
-    "contributors": ["Kai", "Security Researchers"],
+    "contributors": ["Kai"],
     "version": "3.0",
     "description": "Updated with working OTP services ",
     "sms": {
